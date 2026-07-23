@@ -1,0 +1,132 @@
+"use client";
+
+import { useCallback, useRef, useState } from "react";
+import { type SSEEvent, streamSSE } from "@/lib/sseClient";
+import { type FormState } from "@/lib/prompt";
+import InputPanel from "./components/InputPanel";
+import OutputPanel from "./components/OutputPanel";
+
+const API_URL = "/api/cover-letter";
+
+export default function CoverLetterPanel() {
+  const [form, setForm] = useState<FormState>({
+    fullName: "",
+    email: "",
+    phone: "",
+    experienceSummary: "",
+    keySkills: "",
+    jobDescription: "",
+    formality: 7,
+    friendliness: 5,
+  });
+  const [output, setOutput] = useState("");
+  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [streaming, setStreaming] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const abortRef = useRef<AbortController | null>(null);
+
+  const handleEvent = useCallback((ev: SSEEvent) => {
+    switch (ev.type) {
+      case "chunk":
+        setOutput((prev) => prev + ev.text);
+        break;
+      case "status":
+        setStatus(ev.message);
+        break;
+      case "done":
+        setStreaming(false);
+        setStatus(null);
+        break;
+      case "error":
+        setError(ev.message);
+        setStreaming(false);
+        setStatus(null);
+        break;
+      case "aborted":
+        setStreaming(false);
+        setStatus("Cancelled.");
+        break;
+      case "completed":
+        break;
+    }
+  }, []);
+
+  const onSubmit = useCallback(async () => {
+    setError(null);
+    setStatus("Generating…");
+    setOutput("");
+    setStreaming(true);
+    setCopied(false);
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      await streamSSE(API_URL, form, { onEvent: handleEvent, signal: controller.signal });
+      setStreaming((s) => (s ? false : s));
+      setStatus((s) => (s === "Generating…" ? null : s));
+    } catch (err) {
+      if ((err as Error).name === "AbortError") {
+        setStatus("Cancelled.");
+      } else {
+        setError("Network error — is the backend running?");
+      }
+      setStreaming(false);
+    }
+  }, [form, handleEvent]);
+
+  const onStop = useCallback(() => {
+    abortRef.current?.abort();
+    setStreaming(false);
+    setStatus("Cancelled.");
+  }, []);
+
+  const handleCopy = useCallback(() => {
+    if (!output) return;
+    navigator.clipboard.writeText(output).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    });
+  }, [output]);
+
+  const handleChange = useCallback(
+    (field: keyof FormState, value: string | number) => {
+      setForm((prev: FormState) => ({ ...prev, [field]: value }));
+    },
+    []
+  );
+
+  return (
+    <div className="mx-auto max-w-[1040px] px-5 py-10 sm:py-14">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight text-text">
+          Cover Letter Generator
+        </h1>
+        <p className="mt-2 text-sm text-muted">
+          Enter your profile and a job description, then generate a tailored cover letter in seconds.
+        </p>
+      </header>
+
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <InputPanel
+          form={form}
+          onChange={handleChange}
+          disabled={streaming}
+          onSubmit={onSubmit}
+          onStop={onStop}
+          streaming={streaming}
+        />
+        <OutputPanel
+          output={output}
+          streaming={streaming}
+          status={status}
+          error={error}
+          copied={copied}
+          onCopy={handleCopy}
+        />
+      </div>
+    </div>
+  );
+}
