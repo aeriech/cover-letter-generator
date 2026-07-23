@@ -28,6 +28,9 @@ yarn-error.log*
 .env*.local
 .env
 
+# user profile (contains personal information)
+user-profile.json
+
 # vercel
 .vercel
 

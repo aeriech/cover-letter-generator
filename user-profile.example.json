@@ -1,0 +1,7 @@
+{
+  "fullName": "Jordan Smith",
+  "email": "jordan@example.com",
+  "phone": "+1 (555) 0123",
+  "experienceSummary": "4 years building full-stack apps with React and Node.js. Led a team of 5 to ship an internal tool that reduced onboarding time by 30%.",
+  "keySkills": "React, TypeScript, Next.js, Node.js, PostgreSQL, team leadership"
+}

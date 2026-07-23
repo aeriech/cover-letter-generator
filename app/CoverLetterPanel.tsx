@@ -1,24 +1,52 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { type SSEEvent, streamSSE } from "@/lib/sseClient";
-import { type FormState } from "@/lib/prompt";
+import { type FormState, type UserProfile } from "@/lib/prompt";
 import InputPanel from "./components/InputPanel";
 import OutputPanel from "./components/OutputPanel";
 
 const API_URL = "/api/cover-letter";
+const PROFILE_URL = "/api/user-profile";
+
+const DEFAULT_FORM: FormState = {
+  fullName: "",
+  email: "",
+  phone: "",
+  experienceSummary: "",
+  keySkills: "",
+  jobDescription: "",
+  formality: 7,
+  friendliness: 5,
+};
+
+function applyProfile(form: FormState, profile: UserProfile): FormState {
+  return {
+    ...form,
+    fullName: profile.fullName || form.fullName,
+    email: profile.email || form.email,
+    phone: profile.phone || form.phone,
+    experienceSummary: profile.experienceSummary || form.experienceSummary,
+    keySkills: profile.keySkills || form.keySkills,
+  };
+}
 
 export default function CoverLetterPanel() {
-  const [form, setForm] = useState<FormState>({
-    fullName: "",
-    email: "",
-    phone: "",
-    experienceSummary: "",
-    keySkills: "",
-    jobDescription: "",
-    formality: 7,
-    friendliness: 5,
-  });
+  const [form, setForm] = useState<FormState>(DEFAULT_FORM);
+  const [profileLoaded, setProfileLoaded] = useState(false);
+
+  useEffect(() => {
+    fetch(PROFILE_URL)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: UserProfile | null) => {
+        if (data && (data.fullName || data.email || data.phone || data.experienceSummary || data.keySkills)) {
+          setForm((prev) => applyProfile(prev, data));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setProfileLoaded(true));
+  }, []);
+
   const [output, setOutput] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);

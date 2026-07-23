@@ -1,3 +1,11 @@
+export interface UserProfile {
+  fullName: string;
+  email: string;
+  phone: string;
+  experienceSummary: string;
+  keySkills: string;
+}
+
 export interface FormState {
   fullName: string;
   email: string;
