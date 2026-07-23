@@ -33,7 +33,7 @@ function applyProfile(form: FormState, profile: UserProfile): FormState {
 
 export default function CoverLetterPanel() {
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
-  const [profileLoaded, setProfileLoaded] = useState(false);
+  const [profileError, setProfileError] = useState(false);
 
   useEffect(() => {
     fetch(PROFILE_URL)
@@ -43,8 +43,7 @@ export default function CoverLetterPanel() {
           setForm((prev) => applyProfile(prev, data));
         }
       })
-      .catch(() => {})
-      .finally(() => setProfileLoaded(true));
+      .catch(() => setProfileError(true));
   }, []);
 
   const [output, setOutput] = useState("");
@@ -138,10 +137,14 @@ export default function CoverLetterPanel() {
       </header>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        {profileError && (
+          <div className="col-span-full rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+            Could not load user profile from <code className="font-mono text-xs">user-profile.json</code>. Create it from <code className="font-mono text-xs">user-profile.example.json</code> or fill in the fields manually.
+          </div>
+        )}
         <InputPanel
           form={form}
           onChange={handleChange}
-          disabled={streaming}
           onSubmit={onSubmit}
           onStop={onStop}
           streaming={streaming}

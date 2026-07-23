@@ -69,7 +69,7 @@ async function* runStreamWithFallback(
         parts: [{ text: systemInstruction }],
       };
       session = generativeModel.startChat({
-        generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
+        generationConfig: { temperature: 0.7, maxOutputTokens: 2048 },
         systemInstruction: systemInstructionContent,
       });
 

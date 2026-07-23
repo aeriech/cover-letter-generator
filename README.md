@@ -128,3 +128,131 @@ When you load the app, the form automatically fetches this data from `GET /api/u
 4. The route builds a system prompt from the form state and calls Google Generative AI with streaming enabled.
 5. Tokens are streamed back to the client as SSE events, rendered character-by-character in the output panel.
 6. If one model fails, the route retries with fallback models, reporting each attempt back to the client.
+
+## Technical Implementation: Conditional Button States
+
+A form submission button typically has three possible states depending on whether required input data is present. Below are the implementation patterns used in this project and their trade-offs.
+
+### State 1: Visible + Disabled (ghosted)
+
+The button renders in the DOM but applies reduced opacity and removes interactivity via the HTML `disabled` attribute.
+
+```tsx
+const canSubmit = fullName.trim() !== "" && experienceSummary.trim() !== "" && jobDescription.trim() !== "";
+
+<button onClick={onSubmit} disabled={!canSubmit}>
+  Generate cover letter
+</button>
+```
+
+```css
+/* Tailwind: disabled:opacity-50 disabled:cursor-not-allowed */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+```
+
+**Pros**:
+- DOM position is stable — no layout shift when state changes
+- Accessibility tree announces the button as disabled (screen readers receive the `disabled` attribute)
+- User can see what action is expected once the form is complete
+
+**Cons**:
+- At 50% opacity the button can be easily overlooked, especially on white backgrounds
+- Without a hint, the user may not know why it is disabled
+
+**This project uses a variant with increased visibility** — instead of pure transparency, the disabled button shifts to a muted background (`bg-accent/40`) with a subtle border and retains `cursor: not-allowed`. An inline hint message lists the missing fields directly below the button.
+
+### State 2: Hidden (conditional rendering)
+
+The button is absent from the DOM until the required data exists.
+
+```tsx
+const fieldsComplete = fullName.trim() !== "" && experienceSummary.trim() !== "" && jobDescription.trim() !== "";
+
+{fieldsComplete && <button onClick={onSubmit}>Generate cover letter</button>}
+```
+
+```css
+/* Or use CSS visibility to preserve layout space */
+{<button style={{ visibility: fieldsComplete ? "visible" : "hidden" }}>Generate cover letter</button>}
+```
+
+**Pros**:
+- Eliminates confusion — no ghost UI elements
+- Forces the user to complete the form before seeing the action
+
+**Cons**:
+- Can cause confusion of a different kind: the user may not know what to do after filling the form
+- Conditional rendering causes layout shifts (unless using `visibility: hidden`)
+- Accessibility: screen readers do not announce an element that does not exist
+
+### State 3: Visible + Enabled with runtime validation
+
+The button is always rendered and active, but submission triggers inline validation that highlights missing fields.
+
+```tsx
+const [touched, setTouched] = useState(false);
+
+function handleSubmit() {
+  setTouched(true);
+  const errors = [];
+  if (!fullName.trim()) errors.push("Full name is required");
+  if (!experienceSummary.trim()) errors.push("Experience summary is required");
+  if (!jobDescription.trim()) errors.push("Job description is required");
+  if (errors.length > 0) return setValidationErrors(errors);
+  // proceed with generation
+}
+
+<button onClick={handleSubmit}>Generate cover letter</button>
+{errors.map((e) => <p className="text-danger">{e}</p>)}
+```
+
+**Pros**:
+- Button is always visible and clickable — no confusion
+- Validation feedback is contextual (points to the specific missing data)
+
+**Cons**:
+- Encourages a click → fail → fix → click cycle instead of proactive guidance
+- Requires managing `touched` state to avoid showing errors on initial page load
+
+### Combined pattern used in this project
+
+The current implementation in `InputPanel.tsx` combines approach 1 (visible + disabled) with an inline hint:
+
+```tsx
+const canSubmit =
+  form.fullName.trim().length > 0 &&
+  form.experienceSummary.trim().length > 0 &&
+  form.jobDescription.trim().length > 0 &&
+  !streaming;
+
+const missingFields: string[] = [];
+if (!form.fullName.trim()) missingFields.push("Full name");
+if (!form.experienceSummary.trim()) missingFields.push("Experience summary");
+if (!form.jobDescription.trim()) missingFields.push("Job description");
+
+return (
+  <>
+    <button
+      onClick={onSubmit}
+      disabled={!canSubmit}
+      className="w-full rounded-xl border border-accent/30 bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:border-border disabled:bg-panel-2 disabled:text-muted disabled:hover:brightness-100 sm:w-auto"
+    >
+      Generate cover letter
+    </button>
+    {!canSubmit && missingFields.length > 0 && (
+      <p className="mt-2 text-xs text-muted/70">
+        Fill in {missingFields.join(", ")} to enable generation.
+      </p>
+    )}
+  </>
+);
+```
+
+**Design rationale**:
+- The button is always rendered, preventing layout shift and preserving accessibility
+- The disabled state uses `bg-accent/40` (40% opacity on the accent color) instead of `opacity-50` on the whole element, keeping the button recognizable as the primary action while clearly differentiating it from the enabled state
+- The hint message is dynamically generated from the `missingFields` array, guiding the user toward exactly what is needed
+- During streaming, the button is swapped entirely for a **Stop** button via `{!streaming ? <GenerateButton /> : <StopButton />}`, which is appropriate here because the two actions are mutually exclusive and the layout is fixed-height, avoiding shift
