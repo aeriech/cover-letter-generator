@@ -19,6 +19,9 @@ interface InputPanelProps {
   onSubmit: () => void;
   onStop: () => void;
   streaming: boolean;
+  isAuthenticated: boolean;
+  onSaveProfile: () => void;
+  saveStatus: "idle" | "saving" | "saved" | "error";
 }
 
 export default function InputPanel({
@@ -27,6 +30,9 @@ export default function InputPanel({
   onSubmit,
   onStop,
   streaming,
+  isAuthenticated,
+  onSaveProfile,
+  saveStatus,
 }: InputPanelProps) {
   const disabled = streaming;
 
@@ -44,16 +50,22 @@ export default function InputPanel({
   const fieldBase =
     "w-full rounded-xl border bg-panel-2 text-sm text-text outline-none transition-all placeholder:text-muted/70 disabled:opacity-60";
 
-  const fieldFilled = "border-border focus:border-accent focus:ring-2 focus:ring-accent/30";
-  const fieldEmpty  = "border-amber-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-300/40";
+  const fieldFilled =
+    "border-border focus:border-accent focus:ring-2 focus:ring-accent/30";
+  const fieldEmpty =
+    "border-amber-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-300/40";
 
-  const reqClass = (filled: boolean) => `${fieldBase} ${filled ? fieldFilled : fieldEmpty}`;
+  const reqClass = (filled: boolean) =>
+    `${fieldBase} ${filled ? fieldFilled : fieldEmpty}`;
 
   return (
     <div className="rounded-2xl border border-border bg-panel p-5 shadow-sm transition-colors">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="space-y-1">
-          <label className="block text-xs font-semibold text-muted" htmlFor="fullName">
+          <label
+            className="block text-xs font-semibold text-muted"
+            htmlFor="fullName"
+          >
             Full name <span className="text-amber-500">*</span>
           </label>
           <input
@@ -67,7 +79,10 @@ export default function InputPanel({
           />
         </div>
         <div className="space-y-1">
-          <label className="block text-xs font-semibold text-muted" htmlFor="email">
+          <label
+            className="block text-xs font-semibold text-muted"
+            htmlFor="email"
+          >
             Email
           </label>
           <input
@@ -81,7 +96,10 @@ export default function InputPanel({
           />
         </div>
         <div className="space-y-1">
-          <label className="block text-xs font-semibold text-muted" htmlFor="phone">
+          <label
+            className="block text-xs font-semibold text-muted"
+            htmlFor="phone"
+          >
             Phone
           </label>
           <input
@@ -97,7 +115,10 @@ export default function InputPanel({
       </div>
 
       <div className="mt-4 space-y-1">
-        <label className="block text-xs font-semibold text-muted" htmlFor="experienceSummary">
+        <label
+          className="block text-xs font-semibold text-muted"
+          htmlFor="experienceSummary"
+        >
           Experience summary <span className="text-amber-500">*</span>
         </label>
         <textarea
@@ -111,7 +132,10 @@ export default function InputPanel({
       </div>
 
       <div className="mt-4 space-y-1">
-        <label className="block text-xs font-semibold text-muted" htmlFor="keySkills">
+        <label
+          className="block text-xs font-semibold text-muted"
+          htmlFor="keySkills"
+        >
           Key skills
         </label>
         <textarea
@@ -125,7 +149,10 @@ export default function InputPanel({
       </div>
 
       <div className="mt-4 space-y-1">
-        <label className="block text-xs font-semibold text-muted" htmlFor="jobDescription">
+        <label
+          className="block text-xs font-semibold text-muted"
+          htmlFor="jobDescription"
+        >
           Job description <span className="text-amber-500">*</span>
         </label>
         <textarea
@@ -173,6 +200,21 @@ export default function InputPanel({
             className="w-full rounded-xl border border-danger/40 bg-danger/10 px-4 py-2.5 text-sm font-semibold text-danger transition-all hover:bg-danger/20 active:scale-[0.98] sm:w-auto"
           >
             Stop
+          </button>
+        )}
+        {isAuthenticated && !streaming && (
+          <button
+            onClick={onSaveProfile}
+            disabled={saveStatus === "saving"}
+            className="rounded-xl border border-border bg-panel-2 px-4 py-2.5 text-sm font-medium text-text transition-all hover:bg-panel-3 active:scale-[0.98] disabled:opacity-60"
+          >
+            {saveStatus === "saving"
+              ? "Saving…"
+              : saveStatus === "saved"
+                ? "Saved!"
+                : saveStatus === "error"
+                  ? "Save failed"
+                  : "Save profile"}
           </button>
         )}
         {!canSubmit && !streaming && missingFields.length > 0 && (

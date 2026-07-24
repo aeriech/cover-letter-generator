@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type SSEEvent, streamSSE } from "@/lib/sseClient";
 import { type FormState, type UserProfile } from "@/lib/prompt";
+import { useAuth } from "./components/AuthProvider";
 import InputPanel from "./components/InputPanel";
 import OutputPanel from "./components/OutputPanel";
 
@@ -32,18 +33,27 @@ function applyProfile(form: FormState, profile: UserProfile): FormState {
 }
 
 export default function CoverLetterPanel() {
+  const { user, updateProfile } = useAuth();
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
-  const [profileError, setProfileError] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   useEffect(() => {
     fetch(PROFILE_URL)
       .then((res) => (res.ok ? res.json() : null))
       .then((data: UserProfile | null) => {
-        if (data && (data.fullName || data.email || data.phone || data.experienceSummary || data.keySkills)) {
+        if (
+          data &&
+          (data.fullName ||
+            data.email ||
+            data.phone ||
+            data.experienceSummary ||
+            data.keySkills)
+        ) {
           setForm((prev) => applyProfile(prev, data));
         }
       })
-      .catch(() => setProfileError(true));
+      .catch(() => {})
+      .finally(() => setProfileLoaded(true));
   }, []);
 
   const [output, setOutput] = useState("");
@@ -51,6 +61,9 @@ export default function CoverLetterPanel() {
   const [error, setError] = useState<string | null>(null);
   const [streaming, setStreaming] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
 
   const abortRef = useRef<AbortController | null>(null);
 
@@ -91,7 +104,10 @@ export default function CoverLetterPanel() {
     abortRef.current = controller;
 
     try {
-      await streamSSE(API_URL, form, { onEvent: handleEvent, signal: controller.signal });
+      await streamSSE(API_URL, form, {
+        onEvent: handleEvent,
+        signal: controller.signal,
+      });
       setStreaming((s) => (s ? false : s));
       setStatus((s) => (s === "Generating…" ? null : s));
     } catch (err) {
@@ -125,6 +141,20 @@ export default function CoverLetterPanel() {
     []
   );
 
+  const handleSaveProfile = useCallback(async () => {
+    if (!user) return;
+    setSaveStatus("saving");
+    const success = await updateProfile({
+      fullName: form.fullName,
+      email: form.email,
+      phone: form.phone,
+      experienceSummary: form.experienceSummary,
+      keySkills: form.keySkills,
+    });
+    setSaveStatus(success ? "saved" : "error");
+    setTimeout(() => setSaveStatus("idle"), 2500);
+  }, [user, form, updateProfile]);
+
   return (
     <div className="mx-auto max-w-[1040px] px-5 py-10 sm:py-14">
       <header className="mb-8">
@@ -132,22 +162,21 @@ export default function CoverLetterPanel() {
           Cover Letter Generator
         </h1>
         <p className="mt-2 text-sm text-muted">
-          Enter your profile and a job description, then generate a tailored cover letter in seconds.
+          Enter your profile and a job description, then generate a tailored
+          cover letter in seconds.
         </p>
       </header>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        {profileError && (
-          <div className="col-span-full rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-            Could not load user profile from <code className="font-mono text-xs">user-profile.json</code>. Create it from <code className="font-mono text-xs">user-profile.example.json</code> or fill in the fields manually.
-          </div>
-        )}
         <InputPanel
           form={form}
           onChange={handleChange}
           onSubmit={onSubmit}
           onStop={onStop}
           streaming={streaming}
+          isAuthenticated={!!user}
+          onSaveProfile={handleSaveProfile}
+          saveStatus={saveStatus}
         />
         <OutputPanel
           output={output}
