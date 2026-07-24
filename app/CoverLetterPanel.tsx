@@ -29,6 +29,12 @@ function applyProfile(form: FormState, profile: UserProfile): FormState {
     phone: profile.phone || form.phone,
     experienceSummary: profile.experienceSummary || form.experienceSummary,
     keySkills: profile.keySkills || form.keySkills,
+    formality:
+      profile.formality !== undefined ? profile.formality : form.formality,
+    friendliness:
+      profile.friendliness !== undefined
+        ? profile.friendliness
+        : form.friendliness,
   };
 }
 
@@ -47,7 +53,9 @@ export default function CoverLetterPanel() {
             data.email ||
             data.phone ||
             data.experienceSummary ||
-            data.keySkills)
+            data.keySkills ||
+            data.formality !== undefined ||
+            data.friendliness !== undefined)
         ) {
           setForm((prev) => applyProfile(prev, data));
         }
@@ -150,6 +158,8 @@ export default function CoverLetterPanel() {
       phone: form.phone,
       experienceSummary: form.experienceSummary,
       keySkills: form.keySkills,
+      formality: form.formality,
+      friendliness: form.friendliness,
     });
     setSaveStatus(success ? "saved" : "error");
     setTimeout(() => setSaveStatus("idle"), 2500);

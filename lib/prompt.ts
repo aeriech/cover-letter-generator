@@ -4,6 +4,8 @@ export interface UserProfile {
   phone: string;
   experienceSummary: string;
   keySkills: string;
+  formality: number;
+  friendliness: number;
 }
 
 export interface FormState {

@@ -27,6 +27,8 @@ export async function GET() {
     phone: profile.phone ?? "",
     experienceSummary: profile.experience_summary ?? "",
     keySkills: profile.key_skills ?? "",
+    formality: profile.formality ?? 7,
+    friendliness: profile.friendliness ?? 5,
   });
 }
 
@@ -50,6 +52,8 @@ export async function PUT(request: Request) {
       full_name: body.fullName ?? "",
       experience_summary: body.experienceSummary ?? "",
       key_skills: body.keySkills ?? "",
+      formality: body.formality ?? 7,
+      friendliness: body.friendliness ?? 5,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "user_id" }

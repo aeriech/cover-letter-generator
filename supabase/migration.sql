@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS public.user_profiles (
   full_name TEXT,
   experience_summary TEXT,
   key_skills TEXT,
+  formality INTEGER NOT NULL DEFAULT 7,
+  friendliness INTEGER NOT NULL DEFAULT 5,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

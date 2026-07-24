@@ -51,7 +51,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           data.email ||
           data.phone ||
           data.experienceSummary ||
-          data.keySkills)
+          data.keySkills ||
+          data.formality !== undefined ||
+          data.friendliness !== undefined)
       ) {
         setProfile(data);
       } else {
