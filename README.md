@@ -5,6 +5,9 @@ A web application that writes tailored, professional cover letters for you. You 
 The app runs entirely in your browser. Your personal data is stored securely in a database you control, and you can sign in with your Google or GitHub account.
 
 ---
+## 🚀 Live Demo
+[🌐 aeriech-cover-letter-generator.vercel.app](https://aeriech-cover-letter-generator.vercel.app)
+---
 
 ## Table of Contents
 
