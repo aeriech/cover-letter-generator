@@ -7,7 +7,7 @@ The app runs entirely in your browser. Your personal data is stored securely in 
 ---
 ## 🚀 Live Demo
 [🌐 aeriech-cover-letter-generator.vercel.app](https://aeriech-cover-letter-generator.vercel.app)
----
+
 
 ## Table of Contents
 
