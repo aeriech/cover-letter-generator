@@ -10,11 +10,14 @@ type SSEEvent =
   | { readonly type: "aborted" };
 
 const FREE_TIER_MODELS = [
+  "gemini-flash-latest",
+  "gemini-flash-lite-latest",
   "gemini-2.5-flash",
   "gemini-2.5-flash-lite",
   "gemini-2.5-pro",
   "gemini-1.5-flash",
 ] as const;
+
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
