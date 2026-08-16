@@ -48,25 +48,27 @@ export default function InputPanel({
   if (!hasJobDesc) missingFields.push("Job description");
 
   const fieldBase =
-    "w-full rounded-xl border bg-panel-2 text-sm text-text outline-none transition-all placeholder:text-muted/70 disabled:opacity-60";
+    "w-full rounded-lg border border-border bg-panel-2 text-sm text-text outline-none transition-all duration-200 placeholder:text-muted/70 disabled:opacity-60";
 
   const fieldFilled =
-    "border-border focus:border-accent focus:ring-2 focus:ring-accent/30";
+    "border-border focus:border-accent focus:ring-2 focus:ring-accent/20 focus:shadow-[0_0_0_4px_rgba(79,70,229,0.08)]";
   const fieldEmpty =
-    "border-amber-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-300/40";
+    "border-amber-400 focus:border-amber-500 focus:ring-amber-200/40";
+  const fieldFilledNoRing =
+    "border-border";
 
   const reqClass = (filled: boolean) =>
     `${fieldBase} ${filled ? fieldFilled : fieldEmpty}`;
 
   return (
-    <div className="rounded-2xl border border-border bg-panel p-5 shadow-sm transition-colors">
+    <div className="rounded-xl border border-border bg-panel p-5 sm:p-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <label
-            className="block text-xs font-semibold text-muted"
+            className="block text-xs font-semibold text-text-secondary tracking-wide uppercase"
             htmlFor="fullName"
           >
-            Full name <span className="text-amber-500">*</span>
+            Full name <span className="text-warning">*</span>
           </label>
           <input
             id="fullName"
@@ -74,13 +76,13 @@ export default function InputPanel({
             value={form.fullName}
             disabled={disabled}
             onChange={(e) => onChange("fullName", e.target.value)}
-            className={reqClass(hasName)}
+            className={`${reqClass(hasName)} p-2.5`}
             placeholder="Jordan Smith"
           />
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <label
-            className="block text-xs font-semibold text-muted"
+            className="block text-xs font-semibold text-text-secondary tracking-wide uppercase"
             htmlFor="email"
           >
             Email
@@ -91,13 +93,13 @@ export default function InputPanel({
             value={form.email}
             disabled={disabled}
             onChange={(e) => onChange("email", e.target.value)}
-            className={`${fieldBase} ${fieldFilled}`}
+            className={`${fieldBase} ${fieldFilled} p-2.5`}
             placeholder="jordan@example.com"
           />
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <label
-            className="block text-xs font-semibold text-muted"
+            className="block text-xs font-semibold text-text-secondary tracking-wide uppercase"
             htmlFor="phone"
           >
             Phone
@@ -108,18 +110,18 @@ export default function InputPanel({
             value={form.phone}
             disabled={disabled}
             onChange={(e) => onChange("phone", e.target.value)}
-            className={`${fieldBase} ${fieldFilled}`}
+            className={`${fieldBase} ${fieldFilled} p-2.5`}
             placeholder="+1 (555) 0123"
           />
         </div>
       </div>
 
-      <div className="mt-4 space-y-1">
+      <div className="mt-5 space-y-1.5">
         <label
-          className="block text-xs font-semibold text-muted"
+          className="block text-xs font-semibold text-text-secondary tracking-wide uppercase"
           htmlFor="experienceSummary"
         >
-          Experience summary <span className="text-amber-500">*</span>
+          Experience summary <span className="text-warning">*</span>
         </label>
         <textarea
           id="experienceSummary"
@@ -131,9 +133,9 @@ export default function InputPanel({
         />
       </div>
 
-      <div className="mt-4 space-y-1">
+      <div className="mt-5 space-y-1.5">
         <label
-          className="block text-xs font-semibold text-muted"
+          className="block text-xs font-semibold text-text-secondary tracking-wide uppercase"
           htmlFor="keySkills"
         >
           Key skills
@@ -143,17 +145,17 @@ export default function InputPanel({
           value={form.keySkills}
           disabled={disabled}
           onChange={(e) => onChange("keySkills", e.target.value)}
-          className="w-full min-h-[80px] resize-y rounded-xl border border-border bg-panel-2 p-3 text-sm text-text leading-relaxed outline-none transition-all placeholder:text-muted/70 focus:border-accent focus:ring-2 focus:ring-accent/30 disabled:opacity-60"
+          className={`${fieldBase} ${fieldFilled} min-h-[80px] resize-y p-3 leading-relaxed`}
           placeholder="e.g. React, TypeScript, Next.js, Node.js, PostgreSQL, team leadership"
         />
       </div>
 
-      <div className="mt-4 space-y-1">
+      <div className="mt-5 space-y-1.5">
         <label
-          className="block text-xs font-semibold text-muted"
+          className="block text-xs font-semibold text-text-secondary tracking-wide uppercase"
           htmlFor="jobDescription"
         >
-          Job description <span className="text-amber-500">*</span>
+          Job description <span className="text-warning">*</span>
         </label>
         <textarea
           id="jobDescription"
@@ -165,7 +167,7 @@ export default function InputPanel({
         />
       </div>
 
-      <div className="mt-5 space-y-5">
+      <div className="mt-6 space-y-5">
         <ToneSlider
           label="Formality"
           value={form.formality}
@@ -186,18 +188,18 @@ export default function InputPanel({
         />
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center gap-3">
+      <div className="mt-6 flex flex-wrap items-center gap-3">
         <button
           onClick={onSubmit}
           disabled={!canSubmit}
-          className="w-full rounded-xl border border-accent/30 bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:border-border disabled:bg-panel-2 disabled:text-muted disabled:hover:brightness-100 sm:w-auto"
+          className="w-full rounded-lg border border-accent/30 bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 ease-out hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(79,70,229,0.25)] active:translate-y-0 active:shadow-none disabled:cursor-not-allowed disabled:border-border disabled:bg-panel-2 disabled:text-muted disabled:hover:translate-y-0 disabled:hover:shadow-none sm:w-auto"
         >
           Generate cover letter
         </button>
         {streaming && (
           <button
             onClick={onStop}
-            className="w-full rounded-xl border border-danger/40 bg-danger/10 px-4 py-2.5 text-sm font-semibold text-danger transition-all hover:bg-danger/20 active:scale-[0.98] sm:w-auto"
+            className="w-full rounded-lg border border-danger/30 bg-danger-bg px-5 py-2.5 text-sm font-semibold text-danger transition-all duration-200 ease-out hover:bg-danger/10 active:scale-[0.98] sm:w-auto"
           >
             Stop
           </button>
@@ -206,7 +208,7 @@ export default function InputPanel({
           <button
             onClick={onSaveProfile}
             disabled={saveStatus === "saving"}
-            className="rounded-xl border border-border bg-panel-2 px-4 py-2.5 text-sm font-medium text-text transition-all hover:bg-panel-3 active:scale-[0.98] disabled:opacity-60"
+            className="rounded-lg border border-border bg-panel-2 px-5 py-2.5 text-sm font-medium text-text transition-all duration-200 ease-out hover:bg-panel-3 hover:border-border-strong active:scale-[0.98] disabled:opacity-60"
           >
             {saveStatus === "saving"
               ? "Saving…"
@@ -218,7 +220,7 @@ export default function InputPanel({
           </button>
         )}
         {!canSubmit && !streaming && missingFields.length > 0 && (
-          <p className="w-full text-xs font-medium text-amber-600 text-center sm:text-left">
+          <p className="w-full text-xs font-medium text-warning text-center sm:text-left">
             Fill in {missingFields.join(", ")} to enable generation.
           </p>
         )}

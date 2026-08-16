@@ -29,7 +29,9 @@ export default function ToneSlider({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-muted">{label}</span>
+        <span className="text-xs font-semibold text-text-secondary tracking-wide uppercase">
+          {label}
+        </span>
         <span className="rounded-md border border-border bg-panel-2 px-2 py-0.5 text-xs font-mono text-text tabular-nums min-w-[34px] text-center">
           {value}
         </span>

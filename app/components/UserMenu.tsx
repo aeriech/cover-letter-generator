@@ -22,22 +22,22 @@ export default function UserMenu() {
         <p className="text-sm font-medium text-text leading-tight">
           {displayName}
         </p>
-        <p className="text-xs text-muted/70">{user.email}</p>
+        <p className="text-xs text-muted">{user.email}</p>
       </div>
       {avatarUrl ? (
         <img
           src={avatarUrl}
           alt=""
-          className="h-8 w-8 rounded-full border border-border"
+          className="h-8 w-8 rounded-lg border border-border"
         />
       ) : (
-        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-panel-2 text-sm font-semibold text-text">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-panel-2 text-sm font-semibold text-text">
           {displayName.charAt(0).toUpperCase()}
         </div>
       )}
       <button
         onClick={signOut}
-        className="text-xs font-medium text-muted transition-all hover:text-danger"
+        className="text-xs font-medium text-muted transition-all duration-200 ease-out hover:text-danger"
       >
         Sign out
       </button>

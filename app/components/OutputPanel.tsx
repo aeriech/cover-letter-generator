@@ -18,17 +18,19 @@ export default function OutputPanel({
   onCopy,
 }: OutputPanelProps) {
   return (
-    <div className="rounded-2xl border border-border bg-panel p-5 shadow-sm transition-colors">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-semibold text-muted">Cover letter</span>
+    <div className="rounded-xl border border-border bg-panel p-5 sm:p-6">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs font-semibold text-text-secondary tracking-wide uppercase">
+          Cover letter
+        </span>
         {output && !streaming && (
-          <span className="text-[11px] text-muted">
+          <span className="text-[11px] text-muted font-medium">
             {output.length} characters
           </span>
         )}
       </div>
 
-      <div className="min-h-[320px] rounded-xl border border-border bg-panel-2 p-3 text-sm text-text leading-relaxed transition-all">
+      <div className="min-h-[320px] rounded-lg border border-border bg-panel-2 p-3 sm:p-4 text-sm text-text leading-relaxed transition-all">
         {output ? (
           <span>
             {output}
@@ -43,23 +45,23 @@ export default function OutputPanel({
         )}
       </div>
 
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-4 flex items-center gap-2">
         <button
           onClick={onCopy}
           disabled={!output || streaming}
-          className="rounded-xl border border-border bg-panel-2 px-4 py-2 text-sm font-semibold text-text transition-all hover:border-accent hover:text-accent active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-border disabled:hover:text-text"
+          className="rounded-lg border border-border bg-panel-2 px-4 py-2 text-sm font-semibold text-text transition-all duration-200 ease-out hover:border-accent hover:text-accent active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-border disabled:hover:text-text"
         >
           {copied ? "Copied!" : "Copy"}
         </button>
       </div>
 
       {status && !error && (
-        <div className="mt-3 rounded-xl border border-accent/40 bg-info-bg p-2.5 text-sm text-accent">
+        <div className="mt-3 rounded-lg border border-accent/40 bg-accent-subtle p-2.5 text-sm text-accent">
           {status}
         </div>
       )}
       {error && (
-        <div className="mt-3 rounded-xl border border-danger/40 bg-danger-bg p-2.5 text-sm text-danger">
+        <div className="mt-3 rounded-lg border border-danger/40 bg-danger-bg p-2.5 text-sm text-danger">
           {error}
         </div>
       )}

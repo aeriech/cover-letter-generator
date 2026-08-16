@@ -166,18 +166,18 @@ export default function CoverLetterPanel() {
   }, [user, form, updateProfile]);
 
   return (
-    <div className="mx-auto max-w-[1040px] px-5 py-10 sm:py-14">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-text">
+    <div className="mx-auto max-w-[1040px] px-5 py-12 sm:px-8 sm:py-16 animate-fade-in">
+      <header className="mb-10">
+        <h1 className="font-display text-3xl font-bold tracking-tight text-text sm:text-4xl">
           Cover Letter Generator
         </h1>
-        <p className="mt-2 text-sm text-muted">
+        <p className="mt-2 text-sm text-muted sm:text-base">
           Enter your profile and a job description, then generate a tailored
           cover letter in seconds.
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <InputPanel
           form={form}
           onChange={handleChange}

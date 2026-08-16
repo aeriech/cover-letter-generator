@@ -9,8 +9,8 @@ export default function Header() {
 
   return (
     <header className="border-b border-border bg-panel">
-      <div className="mx-auto flex max-w-[1040px] items-center justify-between px-5 py-3">
-        <span className="text-base font-bold tracking-tight text-text">
+      <div className="mx-auto flex max-w-[1040px] items-center justify-between px-5 py-3 sm:px-8">
+        <span className="text-base font-semibold tracking-tight text-text font-display">
           Cover Letter Generator
         </span>
         {!loading && (user ? <UserMenu /> : <AuthButtons />)}
