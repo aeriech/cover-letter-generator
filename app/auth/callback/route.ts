@@ -22,7 +22,6 @@ export async function GET(request: Request) {
         await supabase.from("user_profiles").upsert(
           {
             user_id: user.id,
-            email: user.email ?? "",
             full_name: fullName,
           },
           { onConflict: "user_id", ignoreDuplicates: false }

@@ -4,8 +4,6 @@ import ToneSlider from "./ToneSlider";
 
 export interface FormState {
   fullName: string;
-  email: string;
-  phone: string;
   experienceSummary: string;
   keySkills: string;
   jobDescription: string;
@@ -62,7 +60,7 @@ export default function InputPanel({
 
   return (
     <div className="rounded-xl border border-border bg-panel p-5 sm:p-6">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-1">
         <div className="space-y-1.5">
           <label
             className="block text-xs font-semibold text-text-secondary tracking-wide uppercase"
@@ -78,40 +76,6 @@ export default function InputPanel({
             onChange={(e) => onChange("fullName", e.target.value)}
             className={`${reqClass(hasName)} p-2.5`}
             placeholder="Jordan Smith"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <label
-            className="block text-xs font-semibold text-text-secondary tracking-wide uppercase"
-            htmlFor="email"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={form.email}
-            disabled={disabled}
-            onChange={(e) => onChange("email", e.target.value)}
-            className={`${fieldBase} ${fieldFilled} p-2.5`}
-            placeholder="jordan@example.com"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <label
-            className="block text-xs font-semibold text-text-secondary tracking-wide uppercase"
-            htmlFor="phone"
-          >
-            Phone
-          </label>
-          <input
-            id="phone"
-            type="tel"
-            value={form.phone}
-            disabled={disabled}
-            onChange={(e) => onChange("phone", e.target.value)}
-            className={`${fieldBase} ${fieldFilled} p-2.5`}
-            placeholder="+1 (555) 0123"
           />
         </div>
       </div>

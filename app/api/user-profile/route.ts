@@ -23,8 +23,6 @@ export async function GET() {
 
   return NextResponse.json({
     fullName: profile.full_name ?? "",
-    email: profile.email ?? "",
-    phone: profile.phone ?? "",
     experienceSummary: profile.experience_summary ?? "",
     keySkills: profile.key_skills ?? "",
     formality: profile.formality ?? 7,
@@ -47,8 +45,6 @@ export async function PUT(request: Request) {
   const { error } = await supabase.from("user_profiles").upsert(
     {
       user_id: user.id,
-      email: body.email ?? "",
-      phone: body.phone ?? "",
       full_name: body.fullName ?? "",
       experience_summary: body.experienceSummary ?? "",
       key_skills: body.keySkills ?? "",

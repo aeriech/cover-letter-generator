@@ -48,8 +48,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (
         data &&
         (data.fullName ||
-          data.email ||
-          data.phone ||
           data.experienceSummary ||
           data.keySkills ||
           data.formality !== undefined ||

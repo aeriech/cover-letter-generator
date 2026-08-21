@@ -1,7 +1,5 @@
 export interface UserProfile {
   fullName: string;
-  email: string;
-  phone: string;
   experienceSummary: string;
   keySkills: string;
   formality: number;
@@ -10,8 +8,6 @@ export interface UserProfile {
 
 export interface FormState {
   fullName: string;
-  email: string;
-  phone: string;
   experienceSummary: string;
   keySkills: string;
   jobDescription: string;
@@ -23,15 +19,11 @@ export function buildSystemPrompt(data: FormState): string {
   const formalityLabel = data.formality <= 3 ? "Casual" : data.formality <= 7 ? "Balanced" : "Formal";
   const warmthLabel = data.friendliness <= 3 ? "Direct" : data.friendliness <= 7 ? "Polite" : "Warm";
 
-  const contactParts = [data.email, data.phone].filter((part) => part.trim().length > 0);
-  const contactLine = contactParts.length > 0 ? contactParts.join("  ") : "Not provided";
-
   return [
     "You are a senior career-coach and cover-letter specialist. Write ONE professional cover letter tailored exactly to the job description and candidate profile below.",
     "",
     "Context",
     `Candidate name: ${data.fullName || "Candidate"}`,
-    `Contact: ${contactLine}`,
     `Experience summary: ${data.experienceSummary || "Not provided"}`,
     `Key skills: ${data.keySkills || "Not provided"}`,
     "",

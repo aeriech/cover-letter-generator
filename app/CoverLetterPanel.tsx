@@ -12,8 +12,6 @@ const PROFILE_URL = "/api/user-profile";
 
 const DEFAULT_FORM: FormState = {
   fullName: "",
-  email: "",
-  phone: "",
   experienceSummary: "",
   keySkills: "",
   jobDescription: "",
@@ -25,8 +23,6 @@ function applyProfile(form: FormState, profile: UserProfile): FormState {
   return {
     ...form,
     fullName: profile.fullName || form.fullName,
-    email: profile.email || form.email,
-    phone: profile.phone || form.phone,
     experienceSummary: profile.experienceSummary || form.experienceSummary,
     keySkills: profile.keySkills || form.keySkills,
     formality:
@@ -50,8 +46,6 @@ export default function CoverLetterPanel() {
         if (
           data &&
           (data.fullName ||
-            data.email ||
-            data.phone ||
             data.experienceSummary ||
             data.keySkills ||
             data.formality !== undefined ||
@@ -154,8 +148,6 @@ export default function CoverLetterPanel() {
     setSaveStatus("saving");
     const success = await updateProfile({
       fullName: form.fullName,
-      email: form.email,
-      phone: form.phone,
       experienceSummary: form.experienceSummary,
       keySkills: form.keySkills,
       formality: form.formality,
